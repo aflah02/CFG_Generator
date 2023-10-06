@@ -23,7 +23,7 @@ class CFG:
         assert symbol in self.all_symbols, f"Symbol {symbol} is not a valid symbol"
         return [production for production in self.productions if production[0] == symbol]
     
-    def generate(self, symbol: str, max_length: int = 100, sampling_strategy: str = "uniform", sampling_params: Dict = {}) -> str:
+    def generate(self, symbol: str, max_length: int = 100, sampling_strategy: str = "uniform", sampling_params: Dict = {}, include_whitespace: bool = True) -> str:
         assert symbol in self.nonterminal_symbols, f"Symbol {symbol} is not a nonterminal symbol"
         assert sampling_strategy in ["uniform", "weighted"], "Sampling strategy must be either 'uniform' or 'weighted'"
         assert max_length > 0, "Max length must be positive"
@@ -40,7 +40,10 @@ class CFG:
                 production = productions[production_idx]
                 possible_outputs = production[1]
                 sampled_output = np.random.choice(possible_outputs)
-            generated_string += " " + " ".join(sampled_output)
+            if include_whitespace:
+                generated_string += " " + sampled_output
+            else:
+                generated_string += sampled_output
             current_symbol = sampled_output
             if current_symbol in self.terminal_symbols:
                 break
@@ -90,7 +93,7 @@ if __name__ == "__main__":
         set(all_ascii_characters_without_a),
         production_rules
     )
-    print(CFG.generate("S", max_length=10))
+    print(CFG.generate("S", max_length=1000))
     
 
     
